@@ -10,6 +10,9 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"time"
+	"os/exec"
+	"regexp"
 )
 
 import (
@@ -18,6 +21,31 @@ import (
 )
 
 var network = Entities.Network{make(map[int]*Entities.Client), make(map[net.Conn]int), 0, sync.Mutex{}}
+var lsofout = ""
+
+var ticker = time.NewTicker(time.Second * 5)
+
+func detectDisconnectedClients() {
+	for range ticker.C {
+		lsof := exec.Command("lsof", "-p", strconv.Itoa(os.Getpid()), "-a", "-i", "tcp")
+		grep := exec.Command("grep", "CLOSE_WAIT")
+		lsofOut, _ := lsof.StdoutPipe()
+		lsof.Start()
+		grep.Stdin = lsofOut
+		out, _ := grep.Output()
+		lsofout = string(out)
+	}
+}
+
+func removeDisconnectedClients(conn net.Conn) {
+	for range ticker.C {
+		if strings.Index(lsofout, regexp.MustCompile(":[0-9]+$").FindAllStringSubmatch(conn.RemoteAddr().String(), -1)[0][0]+" ") > -1 {
+			fmt.Println("Closing tcp connection - ", conn.RemoteAddr())
+			network.RemoveClientByConnection(conn)
+			return
+		}
+	}
+}
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
@@ -89,6 +117,14 @@ func main() {
 
 	/*
 	------------------------------------------------------
+	Purpose : Detect a closed connection and add it to the inventory
+	------------------------------------------------------
+	*/
+
+	go detectDisconnectedClients()
+
+	/*
+	------------------------------------------------------
 	Purpose : Handle indivisual tcp connections and also close dead tcp connections
 	------------------------------------------------------
 	*/
@@ -102,5 +138,6 @@ func main() {
 			log.Fatal(err)
 		}
 		go handleConnection(conn)
+		go removeDisconnectedClients(conn)
 	}
 }

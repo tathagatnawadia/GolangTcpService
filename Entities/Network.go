@@ -39,7 +39,7 @@ func (r* Network) GetClientById(userid int) (*Client, bool) {
 func (r *Network) GetActiveClients(requestingClient *Client) string {
 	var result = ""
 	for index := range r.ClientList {
-		if r.ClientList[index].User_id != requestingClient.User_id {
+		if r.ClientList[index].Active == true && r.ClientList[index].User_id != requestingClient.User_id {
 			result += strconv.Itoa(r.ClientList[index].User_id) + " "	
 		}
 	}
@@ -60,6 +60,15 @@ func (r *Network) SendRelayMessage(message *RelayMessage, myClient *Client) (str
 		}
 	}
 	return "ok", nil
+}
+
+func (r* Network) RemoveClientByConnection(conn net.Conn) bool {
+	user_id := r.ActiveConnections[conn]
+	client := r.ClientList[user_id]
+	client.Active = false;
+	delete(r.ActiveConnections, conn);
+	conn.Close()
+	return true
 }
 
 
