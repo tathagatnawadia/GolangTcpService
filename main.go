@@ -9,6 +9,7 @@ import (
 	"bufio"
 	"fmt"
 	"strconv"
+	"sync"
 )
 
 import (
@@ -16,7 +17,7 @@ import (
 	"./Utils"
 )
 
-var network = Entities.Network{make(map[int]*Entities.Client), 0}
+var network = Entities.Network{make(map[int]*Entities.Client), 0, sync.Mutex{}}
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
