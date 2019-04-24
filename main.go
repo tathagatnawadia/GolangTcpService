@@ -7,14 +7,22 @@ import (
 	"log"
 	"strings"
 	"bufio"
+	"fmt"
+	"strconv"
 )
 
 import (
+	"./Entities"
 	"./Utils"
 )
 
+var network = Entities.Network{make(map[int]*Entities.Client), 0}
+
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
+
+	myClient := network.AddNewClient(conn)
+	fmt.Println(myClient)
 
 	Utils.SendPrompt("COMMAND : ", conn)
 	scanNodeData := bufio.NewScanner(conn)
@@ -26,7 +34,7 @@ func handleConnection(conn net.Conn) {
 
 			switch strings.Trim(strings.ToLower(command), " ") {
 		        case "identify":
-		            Utils.SendResponse("You asked to be identified", conn)
+		            Utils.SendResponse(strconv.Itoa(myClient.User_id), conn)
 		        case "list":
 		            Utils.SendResponse("You asked to list all active", conn)
 		        case "relay":
