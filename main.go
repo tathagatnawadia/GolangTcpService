@@ -5,11 +5,38 @@ import (
 	"net"
 	"os"
 	"log"
+	"strings"
+	"bufio"
+)
+
+import (
+	"./Utils"
 )
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
-	for{}
+
+	Utils.SendPrompt("COMMAND : ", conn)
+	scanNodeData := bufio.NewScanner(conn)
+
+	for {
+		for scanNodeData.Scan() {
+			params := strings.Split(scanNodeData.Text(), " ")
+			command := params[0]
+
+			switch strings.Trim(strings.ToLower(command), " ") {
+		        case "identify":
+		            Utils.SendResponse("You asked to be identified", conn)
+		        case "list":
+		            Utils.SendResponse("You asked to list all active", conn)
+		        case "relay":
+		        	Utils.SendResponse("You asked to relay your message to other users", conn)
+		        default:
+		        	Utils.SendResponse("UNKWN Command : "+command, conn)
+		    }
+			Utils.SendPrompt("COMMAND : ", conn)
+		}
+	}
 }
 
 func main() {
