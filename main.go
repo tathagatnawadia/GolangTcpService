@@ -17,7 +17,7 @@ import (
 	"./Utils"
 )
 
-var network = Entities.Network{make(map[int]*Entities.Client), 0, sync.Mutex{}}
+var network = Entities.Network{make(map[int]*Entities.Client), make(map[net.Conn]int), 0, sync.Mutex{}}
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
@@ -35,9 +35,17 @@ func handleConnection(conn net.Conn) {
 
 			switch strings.Trim(strings.ToLower(command), " ") {
 		        case "identify":
-		            Utils.SendResponse(strconv.Itoa(myClient.User_id), conn)
+
+		        	user_id, ok := network.GetUserIdByConnection(myClient.Handler)
+		        	if ok {
+		        		Utils.SendResponse(strconv.Itoa(user_id), myClient.Handler)
+		        	} else {
+		        		panic(fmt.Sprintf("Not able to identify user_id in the network"))
+		        	}
+		            
 		        case "list":
-		            Utils.SendResponse("You asked to list all active", conn)
+		        	Utils.SendResponse(network.GetActiveClients(myClient), myClient.Handler)
+		        	
 		        case "relay":
 		        	Utils.SendResponse("You asked to relay your message to other users", conn)
 		        default:
