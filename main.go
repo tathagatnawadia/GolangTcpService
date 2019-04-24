@@ -23,20 +23,16 @@ func handleConnection(conn net.Conn) {
 	defer conn.Close()
 
 	myClient := network.AddNewClient(conn)
-	fmt.Println(myClient)
 
-	go func() {
-		for {
-			messagePacket := <-myClient.Incoming
-			Utils.SendBroadcast(messagePacket.Message, messagePacket.From, myClient.Handler)
-		}
-	}()
+	go myClient.ReceiveMessages()
 
-	Utils.SendPrompt("COMMAND : ", myClient.Handler)
+	Utils.SendResponse("Welcome to the hub !", myClient.Handler)
+	Utils.SendPrompt("ENTER COMMAND : ", myClient.Handler)
 	scanNodeData := bufio.NewScanner(myClient.Handler)
 
 	for {
 		for scanNodeData.Scan() {
+			myClient.AddToHistory(scanNodeData.Text())
 			params := strings.Split(scanNodeData.Text(), "#")
 			command := params[0]
 
@@ -66,9 +62,9 @@ func handleConnection(conn net.Conn) {
 		        	}
 
 		        default:
-		        	Utils.SendResponse("UNKWN Command : "+command, myClient.Handler)
+		        	Utils.PrintHelpText(myClient.Handler)
 		    }
-			Utils.SendPrompt("COMMAND : ", myClient.Handler)
+			Utils.SendPrompt("ENTER COMMAND : ", myClient.Handler)
 		}
 	}
 }
@@ -96,6 +92,9 @@ func main() {
 	Purpose : Handle indivisual tcp connections and also close dead tcp connections
 	------------------------------------------------------
 	*/
+
+	fmt.Println("Starting the application at localhost:"+os.Getenv("ADDR"))
+	fmt.Println("Join the hub via \n$nc localhost "+os.Getenv("ADDR"))
 
 	for {
 		conn, err := server.Accept()
