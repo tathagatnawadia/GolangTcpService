@@ -47,6 +47,19 @@ func (r *Network) GetActiveClients(requestingClient *Client) string {
 	if result == "" {
 		result = "Looks lonely in here"
 	}
-	 
+
 	return result
 }
+
+func (r *Network) SendRelayMessage(message *RelayMessage, myClient *Client) (string, error) {
+	for _, element := range message.ReceiptClients {
+		if fetchedClient, ok := r.ClientList[element]; ok {
+			if fetchedClient.User_id != myClient.User_id{
+				go fetchedClient.SendMessage(RelayMessage{message.Message, message.From, nil})
+			}
+		}
+	}
+	return "ok", nil
+}
+
+

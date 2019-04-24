@@ -25,12 +25,19 @@ func handleConnection(conn net.Conn) {
 	myClient := network.AddNewClient(conn)
 	fmt.Println(myClient)
 
-	Utils.SendPrompt("COMMAND : ", conn)
-	scanNodeData := bufio.NewScanner(conn)
+	go func() {
+		for {
+			messagePacket := <-myClient.Incoming
+			Utils.SendBroadcast(messagePacket.Message, messagePacket.From, myClient.Handler)
+		}
+	}()
+
+	Utils.SendPrompt("COMMAND : ", myClient.Handler)
+	scanNodeData := bufio.NewScanner(myClient.Handler)
 
 	for {
 		for scanNodeData.Scan() {
-			params := strings.Split(scanNodeData.Text(), " ")
+			params := strings.Split(scanNodeData.Text(), "#")
 			command := params[0]
 
 			switch strings.Trim(strings.ToLower(command), " ") {
@@ -45,13 +52,23 @@ func handleConnection(conn net.Conn) {
 		            
 		        case "list":
 		        	Utils.SendResponse(network.GetActiveClients(myClient), myClient.Handler)
-		        	
+
 		        case "relay":
-		        	Utils.SendResponse("You asked to relay your message to other users", conn)
+		        	messageToBeSent := params[1]
+		        	recievers := params[2]
+		        	relayMessage := Entities.CreateRelayMessage(messageToBeSent, recievers, myClient.User_id)
+
+		        	if relayMessage.ValidateMessageLength(1024) && relayMessage.ValidateRecieverCount(255) {
+		        		network.SendRelayMessage(relayMessage, myClient)
+		        		Utils.SendResponse("Message sent success", myClient.Handler)
+		        	} else {
+		        		Utils.SendResponse("Message not sent due to client voilations", myClient.Handler)
+		        	}
+
 		        default:
-		        	Utils.SendResponse("UNKWN Command : "+command, conn)
+		        	Utils.SendResponse("UNKWN Command : "+command, myClient.Handler)
 		    }
-			Utils.SendPrompt("COMMAND : ", conn)
+			Utils.SendPrompt("COMMAND : ", myClient.Handler)
 		}
 	}
 }

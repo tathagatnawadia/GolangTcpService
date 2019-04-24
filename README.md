@@ -5,6 +5,7 @@
 * Same user_id may get assigned to multiple connections, lets avoid that by some mutex
 * Have a loop mechanism to hold the users tcp connection to let him enter the 3 commands I am supposed to design
 * Dead clients appearing in the active list - gotta do something about it
+* A bug possiblity - what if the relay message is sent my myself or sent to a reciever multiple times
 
 ### Structure
 
@@ -39,7 +40,7 @@ $nc localhost 6666
 ```bash
 $IDENTIFY
 $LIST
-$RELAY
+$RELAY #Message i want to send, its a lame way but lets do this #1,3,4,10
 ```
 ### Unittest 
 ```bash
