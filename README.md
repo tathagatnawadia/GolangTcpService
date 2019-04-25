@@ -28,9 +28,35 @@ message: Stores the message(json/string/bytes/anything)
 from: Identity of the user who sent the message
 receiptClients : Contains the list of user_id which will receive the message
 
+```bash
+.
+├── Config
+│   └── config.go
+│
+├── Entities
+│   ├── Client.go
+│   ├── Network.go
+│   └── RelayMessage.go
+│
+├── README.md
+│
+├── RelayServer
+│   └── RelayServer.go
+│
+├── Utils
+│   └── Utils.go
+│
+└── main.go
+```
+
 ### Hub setup
 ```bash
 $go run main.go
+```
+or 
+```bash
+$go build
+$./relay_solution
 ```
 ### Client connection
 ```bash

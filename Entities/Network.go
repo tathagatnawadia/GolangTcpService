@@ -12,14 +12,14 @@ type Network struct {
 	Mutex sync.Mutex
 }
 
-func (r *Network) AssignAddressToNode() int {
+func (r *Network) assignAddressToNode() int {
 	r.Total = r.Total + 1
 	return r.Total
 }
  
-func (r* Network) AddNewClient(conn net.Conn) *Client {
+func (r* Network) Register(conn net.Conn) *Client {
 	r.Mutex.Lock()
-	client := &Client{r.AssignAddressToNode(), conn, make(chan RelayMessage), time.Now().String(), true, nil}
+	client := &Client{r.assignAddressToNode(), conn, make(chan RelayMessage), time.Now().String(), true, nil}
 	r.ClientList[client.User_id] = client
 	r.ActiveConnections[conn] = client.User_id
 	r.Mutex.Unlock()
@@ -71,4 +71,6 @@ func (r* Network) RemoveClientByConnection(conn net.Conn) bool {
 	return true
 }
 
-
+func NewNetwork() (*Network, error) {
+	return &Network{make(map[int]*Client), make(map[net.Conn]int), 0, sync.Mutex{}}, nil
+}

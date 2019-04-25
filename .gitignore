@@ -3,7 +3,7 @@
 *.dll
 *.so
 *.dylib
-
+relay_solution
 # Test binary, built with `go test -c`
 *.test
 
