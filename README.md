@@ -6,6 +6,7 @@
 * Have a loop mechanism to hold the users tcp connection to let him enter the 3 commands I am supposed to design
 * Dead clients appearing in the active list - gotta do something about it
 * A bug possiblity - what if the relay message is sent my myself or sent to a reciever multiple times
+* Testing in scope - unittest, component and performance benchmarks - may have to restructure classes to make it testable
 
 ### Structure
 

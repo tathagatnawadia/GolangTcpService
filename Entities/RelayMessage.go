@@ -1,19 +1,19 @@
 package Entities
 
 import (
-	"strings"
 	"strconv"
+	"strings"
 	"unsafe"
 )
 
 type RelayMessage struct {
-	Message string
-	From int
+	Message        string
+	From           int
 	ReceiptClients []int
 }
 
 func (m *RelayMessage) ValidateMessageLength(maxSize int) bool {
-	return (len(m.Message) + int(unsafe.Sizeof(m.Message)))/1000 <= maxSize
+	return (len(m.Message)+int(unsafe.Sizeof(m.Message)))/1000 <= maxSize
 }
 
 func (m *RelayMessage) ValidateRecieverCount(maxSize int) bool {
@@ -27,7 +27,7 @@ func CreateRelayMessage(message string, recievers string, from int) *RelayMessag
 	for index := range receipts {
 		user_id, err := strconv.Atoi(receipts[index])
 		if err == nil {
-	 		relayMessage.ReceiptClients = append(relayMessage.ReceiptClients, user_id)
+			relayMessage.ReceiptClients = append(relayMessage.ReceiptClients, user_id)
 		}
 	}
 
