@@ -32,6 +32,10 @@ message: Stores the message(json/string/bytes/anything)
 from: Identity of the user who sent the message
 receiptClients : Contains the list of user_id which will receive the message
 
+#### Dependencies
+github.com/stretchr/testify/mock
+github.com/stretchr/testify/assert
+
 ```bash
 ├── Entities
 │   ├── Client.go
@@ -121,4 +125,4 @@ relay_solution/Utils/Utils.go:19:		SendBroadcast			100.0%
 relay_solution/Utils/Utils.go:24:		PrintHelpText			100.0%
 total:						(statements)			100.0%
 ```
- 
+
