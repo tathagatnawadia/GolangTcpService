@@ -25,7 +25,6 @@ type Client struct {
 	History   []string
 }
 
-//@todo: getter example
 func (r *Client) GetUserId() int {
 	return r.User_id
 }
