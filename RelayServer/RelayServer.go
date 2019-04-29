@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"../Entities"
-	"../Utils"
+	"relay_solution/Entities"
+	"relay_solution/Utils"
 )
 
 type Server interface {

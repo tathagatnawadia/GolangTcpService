@@ -2,7 +2,7 @@ package Entities
 
 import (
 	"net"
-	"../Utils"
+	"relay_solution/Utils"
 )
 
 type IClient interface {

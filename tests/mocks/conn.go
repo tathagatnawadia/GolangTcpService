@@ -2,6 +2,8 @@ package mocks
 
 import (
 	"fmt"
+	"net"
+	"time"
 	
 	"github.com/stretchr/testify/mock"
 )
@@ -24,6 +26,43 @@ func (conn *ConnMock) Write(b []byte) (n int, err error) {
 	conn.Result = string(b)
 
 	return 0, nil
+}
+
+func (conn *ConnMock) Close() error {
+	conn.Called()
+
+	return nil
+}
+
+func (conn *ConnMock) LocalAddr() net.Addr {
+	conn.Called()
+
+	return nil
+}
+
+func (conn *ConnMock) RemoteAddr() net.Addr {
+	conn.Called()
+
+	return nil
+}
+
+
+func (conn *ConnMock) SetDeadline(t time.Time) error {
+	conn.Called()
+
+	return nil
+}
+
+func (conn *ConnMock) SetReadDeadline(t time.Time) error {
+	conn.Called()
+
+	return nil
+}
+
+func (conn *ConnMock) SetWriteDeadline(t time.Time) error {
+	conn.Called()
+
+	return nil
 }
 
 func NewConnMock(methods ...string) *ConnMock {

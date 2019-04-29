@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"../tests/mocks"
-	"../Utils"
+	"relay_solution/tests/mocks"
+	"relay_solution/Utils"
 )
 
 func TestSendResponse(t *testing.T) {

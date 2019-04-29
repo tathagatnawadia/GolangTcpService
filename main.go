@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"./Entities"
-	"./RelayServer"
+	"relay_solution/Entities"
+	"relay_solution/RelayServer"
 )
 
 const (

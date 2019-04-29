@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	. "../Entities"
+	. "relay_solution/Entities"
 )
 
 func TestRelayMessage_ValidateMessageLength(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	. "../Entities"
-	"../tests/mocks"
+	. "relay_solution/Entities"
+	"relay_solution/tests/mocks"
 )
 
 func TestClient_SendMessage(t *testing.T) {
